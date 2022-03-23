@@ -18,17 +18,17 @@ def generate_hyperbolic(difficulty = 1):
         hyperbolics = np.asarray(np.random.choice([sinh, cosh, tanh, coth, sech, csch], terms))
         coefficients = np.random.choice(list(range(1, 20)), terms)
 
-        coefficients[coefficient_type == 'negative'] = -coefficients[coefficient_type == 'negative']
-        # coefficients[coefficient_type == 'fractions'] = frac(1,  coefficients[coefficient_type == 'fractions'])
+        coefficients[coefficient_type == 'negative'] = - coefficients[coefficient_type == 'negative']
+    frac_indx = np.where(coefficient_type == 'fractions')
 
-        print(coefficient_type)
-        print(coefficients[coefficient_type == 'fractions'])
+    for i in range(0, terms):
+        if i in frac_indx:
+            expr += hyperbolics[i](x) / coefficients[i]
+        else:
+            expr += coefficients[i] * hyperbolics[i](x)
 
-        for i in range(0, terms):
-            # if i in coefficients[coefficient_type == 'fractions']:
-            #     expr += hyperbolics[i] * 1 / coefficients[i]
-            else:
-                expr += coefficients[i] * hyperbolics[i](x)
+    # print(coefficient_type)
+    # print(frac_indx[0])
 
     if difficulty == 2:
     ### INCLUDE COTH SECH CSCH
@@ -36,9 +36,9 @@ def generate_hyperbolic(difficulty = 1):
         coefficient_type = np.asarray(np.random.choice(['natural', 'negative', 'fractions'], terms))
         hyperbolics = np.asarray(np.random.choice([sinh, cosh, tanh, coth, sech, csch], terms))
         coefficients = np.random.choice(list(range(1, 20)), terms)
-        coefficients[coefficient_type == 'negative'] = -coefficients[coefficient_type == 'negative']
+    coefficients[coefficient_type == 'negative'] = - coefficients[coefficient_type == 'negative']
 
     return expr
 
-expr = generate_hyperbolic(difficulty = 1)
+expr = generate_hyperbolic(difficulty = 2)
 pprint(expr, use_unicode = True)
