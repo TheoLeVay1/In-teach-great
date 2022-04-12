@@ -122,7 +122,7 @@ def simulate_elo(games, perturbation):
 
 
 # IGNORE THIS FUNCTION FOR NOW
-def student_vs_question(games, perturbation):
+def student_vs_question(games, perturbation, question_dist):
     # Define student elo ratings
     # The real elo ratings of the students
     act_student_ratings = {'student1': 300, 'student2': 500, 'student3': 700, 'student4': 800, 'student5': 900, 'student6': 1100,
@@ -132,16 +132,44 @@ def student_vs_question(games, perturbation):
     pred_student_ratings = {'student1': 1000, 'student2': 1000, 'student3': 1000, 'student4': 1000, 'student5': 1000,
                             'student6': 1000, 'student7': 1000, 'student8': 1000, 'student9': 1000, 'student10': 1000}
 
-    # Elo ratings for questions
-    question_ratings = {'question1': 300, 'question2': 500, 'question3': 700, 'question4': 800, 'question5': 900, 'question6': 1100,
-                        'question7': 1200, 'question8': 1300, 'question9': 1500, 'question10': 1700}
-
     student_keys = list(act_student_ratings.keys())
-    question_keys = list(question_ratings.keys())
+    # question_keys = list(question_ratings.keys())
 
     for i in student_keys:
-        for _ in range(0, games):
-            pass
+        student_rating = pred_student_ratings[i]
+        student_act_rating = act_student_ratings[i]
+
+        # Elo ratings for questions
+        question_ratings = {'question1': 100, 'question2': 200, 'question3': 300, 'question4': 400, 'question5': 500,
+                            'question6': 600, 'question7': 700, 'question8': 800, 'question9': 900,
+                            'question10': 1000, 'question11': 1100, 'question12': 1200, 'question13': 1300,
+                            'question14': 1400, 'question15': 1500, 'question16': 1600, 'question17': 1700,
+                            'question18': 1800, 'question19': 1900, 'question20': 2000}
+        student_data = [0]*games
+        question_data = [0]*games
+        for j in range(0, games):
+            if j < 100:  # k value varies depending on the number of games playedd
+                k = 32
+            elif 100 <= j < 500:
+                k = 16
+            else:
+                k = 10
+            question_range = dict((k, v) for k, v in question_ratings.items()
+                                  if student_rating*(1 + question_dist) >= v >= student_rating*(1-question_dist))
+            question_keys = list(question_range.keys())
+            if not question_keys:
+                print(student_rating)
+                print(question_ratings)
+            question = random.choice(question_keys)
+            question_rating = question_ratings[question]
+            new_ratings = update_ratings(student_rating, question_rating, student_act_rating, question_rating, k, perturbation)
+            student_rating, question_ratings[question] = new_ratings
+            student_data[j] = student_rating
+            question_data[j] = list(question_ratings.values())
+        plt.plot(student_data)
+        plt.plot(question_data)
+        plt.show()
 
 
-simulate_elo(800, 0.1)
+# simulate_elo(800, 0.1)
+student_vs_question(800, 0, 0.8)
