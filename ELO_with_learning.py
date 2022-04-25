@@ -2,7 +2,7 @@ import random
 from random import uniform
 import numpy as np
 import matplotlib.pyplot as plt
-
+import sys
 
 def update_ratings(player_rating, question_rating, p_win, k_value):
     """
@@ -44,12 +44,6 @@ def simulate_elo(games, learning_rate = 0.1):
     :param perturbation: The randomness for each game played
     :return:
     """
-
-    # Define student elo ratings
-    # The real elo ratings of the students
-    # act_student_ratings = {'student1': 300, 'student2': 500, 'student3': 700, 'student4': 800, 'student5': 900, 'student6': 1100,
-    #                        'student7': 1200, 'student8': 1300, 'student9': 1500, 'student10': 1700}
-
     # The predicted elo ratings of the students
     starting_rating = 0
     student_rating = {'student': starting_rating}
@@ -58,7 +52,7 @@ def simulate_elo(games, learning_rate = 0.1):
     question_ratings = {'question1': 300 , 'question2': 500, 'question3': 700, 'question4': 800, 'question5': 900, 'question6': 1100,
                         'question7': 1200, 'question8': 1300, 'question9': 1500, 'question10': 1700}
 
-    question_probability = {'question1': 0.6 , 'question2': 0.2, 'question3': 0.3, 'question4': 0.6, 'question5': 0.4, 'question6': 0.2,
+    question_probability = {'question1': 0.6 , 'question2': 0.5, 'question3': 0.9, 'question4': 0.6, 'question5': 0.4, 'question6': 0.2,
                         'question7': 0.5, 'question8': 0.1, 'question9': 0.05, 'question10': 0.01}
 
     # List of keys for dictionaries
@@ -107,9 +101,11 @@ def simulate_elo(games, learning_rate = 0.1):
             question_probability[question] += learning_rate/2
 
     # Plot data
-    plt.plot(player_data)
+    plt.plot(player_data, 'k')
     plt.plot(question_data)
-    plt.show()
+    plt.legend(['Player', 'Question 1', 'Question 2', 'Question 3', 'Question 4',
+    'Question 5', 'Question 6', 'Question 7', 'Question 8', 'Question 9', 'Question 10'],
+     loc = (1.04, 0.2))
+    plt.savefig('output.png', bbox_inches='tight')
 
-
-simulate_elo(10)
+simulate_elo(200)

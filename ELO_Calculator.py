@@ -50,7 +50,6 @@ def update_ratings(playerA_rating, playerB_rating, playerA_act_rating, playerB_a
     if upper_lim > 1:
         upper_lim = 1  # Actual score can't be greater than 1
     act_score = uniform(lower_lim, upper_lim)  # Randomly chooses value between the upper and lower limits
-
     # Define the K value of the algorithm. This should ideally vary depending on the players and how
     # many games have been played. (I.e someone whos played 100 games should have a lower K value than
     # someone who has played only 3 games)
@@ -60,6 +59,7 @@ def update_ratings(playerA_rating, playerB_rating, playerA_act_rating, playerB_a
     new_p1_rat = p1_rat + k_value * (act_score - exp_1)
     new_p2_rat = p2_rat + k_value * (1 - act_score - exp_2)
 
+    print(new_p1_rat, new_p2_rat)
     return new_p1_rat, new_p2_rat
 
 
@@ -93,7 +93,7 @@ def simulate_elo(games, perturbation):
     data_points = [0]*games
     data_points[0] = list(pred_student_ratings.values())
     for i in range(1, games):
-        if i < 100:  # k value varies depending on the number of games playedd
+        if i < 100:  # k value varies depending on the number of games played
             k = 32
         elif 100 <= i < 500:
             k = 16
