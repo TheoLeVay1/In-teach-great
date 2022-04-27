@@ -21,9 +21,10 @@ for i in range(1, number_of_choice):
     answer_letters[i] = alphabet[i]
 
 random.shuffle(answers)
-print("Question: ")
+print("Question: \n")
 pprint(q1, use_unicode=True)
-print("\nsolutions: \n")
+print(" \n==========================================")
+print("\nSolutions: ")
 
 
 for i in range(len(answers)):
