@@ -148,13 +148,18 @@ def student_vs_question(games, perturbation, question_dist, individual):
     # List of keys for students (i.e student1, student2 ... student10)
     student_keys = list(act_student_ratings.keys())
 
-    total_question_ratings ={'question1': 100, 'question2': 200, 'question3': 300, 'question4': 400, 'question5': 500,
-                             'question6': 600, 'question7': 700, 'question8': 800, 'question9': 900,
-                             'question10': 1000, 'question11': 1100, 'question12': 1200, 'question13': 1300,
-                             'question14': 1400, 'question15': 1500, 'question16': 1600, 'question17': 1700,
-                             'question18': 1800, 'question19': 1900, 'question20': 2000}
+    total_question_ratings ={'question1': 200, 'question2': 250, 'question3': 300, 'question4': 350, 'question5': 400,
+                             'question6': 450, 'question7': 500, 'question8': 550, 'question9': 600,
+                             'question10': 650, 'question11': 700, 'question12': 750, 'question13': 800,
+                             'question14': 850, 'question15': 900, 'question16': 950, 'question17': 1000,
+                             'question18': 1050, 'question19': 1100, 'question20': 1150, 'question21': 1200,
+                             'question22': 1250, 'question23': 1300, 'question24': 1350, 'question25': 1400,
+                             'question26': 1450, 'question27': 1500, 'question28': 1550, 'question29': 1600,
+                             'question30': 1650, 'question31': 1700, 'question32': 1750, 'question33': 1800,
+                             'question34': 1850, 'question35': 1900, 'question36': 1950, 'question37': 2000,
+                             'question38': 2050, 'question39': 2100, 'question40': 2150}
 
-    if individual:
+    if individual:  # If the questions are for the individual or global
         for i in student_keys:
             student_rating = pred_student_ratings[i]
             student_act_rating = act_student_ratings[i]
@@ -165,8 +170,12 @@ def student_vs_question(games, perturbation, question_dist, individual):
                                 'question10': 1000, 'question11': 1100, 'question12': 1200, 'question13': 1300,
                                 'question14': 1400, 'question15': 1500, 'question16': 1600, 'question17': 1700,
                                 'question18': 1800, 'question19': 1900, 'question20': 2000}
+
+            # Create empty lists for the data points
             student_data = [0]*games
             question_data = [0]*games
+
+            # Run for the number of games specified
             for j in range(0, games):
                 if j < 100:  # k value varies depending on the number of games playedd
                     k = 32
@@ -174,12 +183,20 @@ def student_vs_question(games, perturbation, question_dist, individual):
                     k = 16
                 else:
                     k = 10
+                # Set the range of questions that the student can get based off their rating
                 question_range = dict((k, v) for k, v in question_ratings.items()
                                       if student_rating*(1 + question_dist) >= v >= student_rating/(1 + question_dist))
-                question_keys = list(question_range.keys())
-                question = random.choice(question_keys)
-                question_rating = question_ratings[question]
-                new_ratings = update_ratings(student_rating, question_rating, student_act_rating, question_rating, k, perturbation)
+
+                # Get the question rating and question name
+                question_keys = list(question_range.keys())  # Question names within the rating range
+                question = random.choice(question_keys)  # Choose randomly, a question name
+                question_rating = question_ratings[question]  # Question rating
+
+                # Update the ratings by using the predicted ratings and actual ratings of questions and students
+                new_ratings = update_ratings(student_rating, question_rating, student_act_rating, question_rating,
+                                             k, perturbation)
+
+                # Set the question ratings and update the data points
                 student_rating, question_ratings[question] = new_ratings
                 student_data[j] = student_rating
                 question_data[j] = list(question_ratings.values())
@@ -188,10 +205,12 @@ def student_vs_question(games, perturbation, question_dist, individual):
             plt.plot(question_data)
             plt.show()
 
-    else:
+    else:  # If the questions are for the individual or global
+        # Create empty lists for the data points
         student_data = [0]*games
         question_data = [0]*games
 
+        # Run for the number of games specified
         for j in range(0, games):
             if j < 100:  # k value varies depending on the number of games playedd
                 k = 32
@@ -199,21 +218,38 @@ def student_vs_question(games, perturbation, question_dist, individual):
                 k = 16
             else:
                 k = 10
+
+            # List of students
             sample_list = list(student_keys)
+
+            # For each student
             for i in range(0, len(list(pred_student_ratings))):
+
+                # Select a student and remove them from the sample list
                 test_student = random.choice(sample_list)
                 sample_list.remove(test_student)
+
+                # Find the actual and predicted rating of the student
                 student_rating = pred_student_ratings[test_student]
                 student_act_rating = act_student_ratings[test_student]
 
+                # Set the range of questions that the student can get based off their rating
                 question_range = dict((k, v) for k, v in total_question_ratings.items()
                                       if student_rating*(1 + question_dist) >= v >= student_rating/(1 + question_dist))
+
+                # Choose a random question from that list
                 question_keys = list(question_range.keys())
                 question = random.choice(question_keys)
 
+                # Find rating of the question
                 question_rating = total_question_ratings[question]
-                new_ratings = update_ratings(student_rating, question_rating, student_act_rating, question_rating, k, perturbation)
+
+                # Find the updated ratings of both the student and question
+                new_ratings = update_ratings(student_rating, question_rating, student_act_rating, question_rating, k,
+                                             perturbation)
                 pred_student_ratings[test_student], total_question_ratings[question] = new_ratings
+
+            # Updating the data for students and questions
             student_data[j] = list(pred_student_ratings.values())
             question_data[j] = list(total_question_ratings.values())
 
@@ -225,4 +261,4 @@ def student_vs_question(games, perturbation, question_dist, individual):
 
 
 # simulate_elo(800, 0.1)
-student_vs_question(800, 0, 0.5, True)
+student_vs_question(800, 0, 1, False)
