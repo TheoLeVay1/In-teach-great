@@ -48,7 +48,10 @@ def simulate_elo(games, learning_rate = 0.1):
     """
     # The predicted elo ratings of the students
     starting_rating = 500
-    student_rating = {'student': starting_rating}
+    student_rating = {'student1': starting_rating, 'student2': starting_rating,
+    'student2': starting_rating, 'student3': starting_rating, 'student4': starting_rating,
+    'student5': starting_rating, 'student6': starting_rating, 'student7': starting_rating,
+    'student8': starting_rating, 'student9': starting_rating, 'student10': starting_rating}
 
     # Elo ratings for questions
 
@@ -83,8 +86,8 @@ def simulate_elo(games, learning_rate = 0.1):
     question_keys = list(question_ratings.keys())
 
     # Set up a list for data
-    player_data = [0]*games
-    player_data[0] = starting_rating
+    player_data = np.empty(games)
+    player_data[:, 0] = starting_rating
 
     # question_data = [0]*games
     question_data = np.zeros(shape = (games, len(question_ratings)))
@@ -99,44 +102,30 @@ def simulate_elo(games, learning_rate = 0.1):
             k = 10
 
         # Initialise the player rating
-        player = student_keys[0]
-        player_rating = student_rating[player]
+        # player = student_keys[0]
+        for student in student_keys:
+            player_rating = student_rating[student]
 
-        sample_list = list(question_keys)  # Create a list to sample from without replacement
+            sample_list = list(question_keys)  # Create a list to sample from without replacement
 
-        # Use normal distribution of player rating to select a number, and then
-        # choose question with closest score to that number
-        varied_value = np.random.normal(loc = player_rating, scale = 200)
+            # Use normal distribution of player rating to select a number, and then
+            # choose question with closest score to that number
+            varied_value = np.random.normal(loc = player_rating, scale = 200)
 
-        # Selects question from question bank with ELO score closest to value
-        # selected from distribution
+            # Selects question from question bank with ELO score closest to value
+            # selected from distribution
 
-        question, question_rating = min(question_ratings.items(), key = lambda x: abs(varied_value - x[1]))
-        p_win = question_probability[question]
+            question, question_rating = min(question_ratings.items(), key = lambda x: abs(varied_value - x[1]))
+            p_win = question_probability[question]
 
-        # Calculate new ratings and assign the new values into the dictionary
-        new_ratings = update_ratings(player_rating, question_rating, p_win, k)
-        student_rating['student'], question_ratings[question], outcome = new_ratings
+            # Calculate new ratings and assign the new values into the dictionary
+            new_ratings = update_ratings(player_rating, question_rating, p_win, k)
+            student_rating['student'], question_ratings[question], outcome = new_ratings
 
-        # Fill in the new data point for the ratings of each player
-        player_data[i] = student_rating['student']
-        question_data[i] = list(question_ratings.values())
+            # Fill in the new data point for the ratings of each player
+            player_data[i] = student_rating['student']
+            question_data[i] = list(question_ratings.values())
 
-        # if question != 'Blueprint 3':
-        #     if outcome == 1:
-        #         for group in groups:
-        #             if question in group:
-        #                 # question_probability[question] += question_probability[question] + 1 / (question_probability[question] * 0.01)
-        #                 question_probability[question] += question_probability[question] + 0.01
-        #
-        #                 temp_group = [elem for elem in group if elem != question]
-        #                 for elem in temp_group:
-        #                     # question_probability[elem] += question_probability[elem] + 1 / (question_probability[elem] * 0.005)
-        #                     question_probability[elem] += question_probability[elem] + 0.005
-        #
-        #             else:
-        #                 # question_probability[question] = question_probability[question] + 1 / (question_probability[question] * 0.01)
-        #                 question_probability[question] = question_probability[question] + 0.005
     # Plot data
     plt.plot(player_data, 'k')#, linewidth = 2)
     plt.plot(question_data)#, linewidth = 2)
@@ -144,14 +133,7 @@ def simulate_elo(games, learning_rate = 0.1):
     # plt.title('Example student ELO graph')
     plt.xlabel('Number of questions answered')
     plt.ylabel('Elo score')
-
-    #, 'Blueprint 1.1', 'Blueprint 1.2', 'Blueprint 1.3', 'Blueprint 2',
-    # 'Blueprint 3','Blueprint 4','Blueprint 5','Blueprint 6','Blueprint 7.1',
-    # 'Blueprint 7.2','Blueprint 7.3','Blueprint 7.4','Blueprint 8','Blueprint 9',
-    # 'Blueprint 10.1', 'Blueprint 10.2', 'Blueprint 10.3','Blueprint 11.1',
-    # 'Blueprint 11.2','Blueprint 11.3','Blueprint 11.4', 'Blueprint 11.5',
-    # 'Blueprint 12','Blueprint 13', 'Blueprint 14', 'Blueprint 15',
-    # 'Blueprint 16', 'Blueprint 17'], loc = (1.04, -0.4))
+    print(player_data)
     plt.show()
     # plt.savefig('with_learning.svg', bbox_inches='tight')
 
